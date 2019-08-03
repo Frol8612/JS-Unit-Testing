@@ -1,0 +1,20 @@
+{
+  "name": "first-task",
+  "version": "1.0.0",
+  "description": "",
+  "main": ".eslintrc.js",
+  "scripts": {
+    "test": "nyc mocha src/**/*.test.js",
+    "test:dev": "mocha src/**/*.test.js -w"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.2.0",
+    "eslint-plugin-import": "^2.18.2",
+    "mocha": "^6.2.0",
+    "nyc": "^14.1.1",
+    "chai": "^4.2.0"
+  }
+}
