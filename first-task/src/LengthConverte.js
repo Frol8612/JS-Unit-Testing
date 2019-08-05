@@ -34,7 +34,7 @@ class LengthConverter {
     const CONVERT_TO_METERS = {
       cm: 100,
       m: 1,
-      miles: 1609.344,
+      miles: 1 / 1609.344,
       'sea miles': 1852,
       inches: 39.37,
       foot: 3.281,
@@ -46,11 +46,11 @@ class LengthConverter {
   static converToInches(value, measurement) {
     const CONVERT_TO_INCHES = {
       cm: 2.54,
-      m: 39.37,
-      miles: 63360,
+      m: 0.0254,
+      miles: 1 / 63360,
       'sea miles': 72913.386,
       inches: 1,
-      foot: 12,
+      foot: 1 / 12,
     };
 
     return resultConvert(value, measurement, CONVERT_TO_INCHES);
@@ -60,10 +60,10 @@ class LengthConverter {
     const CONVERT_TO_CENTIMETERS = {
       cm: 1,
       m: 0.01,
-      miles: 160934.4,
+      miles: 1 / 160934.4,
       'sea miles': 185200,
-      inches: 2.54,
-      foot: 30.48,
+      inches: 1 / 2.54,
+      foot: 1 / 30.48,
     };
 
     return resultConvert(value, measurement, CONVERT_TO_CENTIMETERS);
@@ -85,8 +85,8 @@ class LengthConverter {
   static converToFoots(value, measurement) {
     const CONVERT_TO_FOOTS = {
       cm: 30.48,
-      m: 3.281,
-      miles: 5280,
+      m: 0.3048,
+      miles: 1 / 5280,
       'sea miles': 6076.115,
       inches: 12,
       foot: 1,

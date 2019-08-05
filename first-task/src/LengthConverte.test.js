@@ -21,7 +21,7 @@ const CONTAINED_IN_MILE = [
 const CONTAINED_IN_METER = [
   { unit: 'cm', value: 100 },
   { unit: 'm', value: 1 },
-  { unit: 'miles', value: 1609.344 },
+  { unit: 'miles', value: 0.0006213711922373339 },
   { unit: 'sea miles', value: 0.0005399568034557236 },
   { unit: 'inches', value: 39.37 },
   { unit: 'foot', value: 3.281 },
@@ -29,20 +29,20 @@ const CONTAINED_IN_METER = [
 
 const CONTAINED_IN_INCHES = [
   { unit: 'cm', value: 2.54 },
-  { unit: 'm', value: 39.37 },
-  { unit: 'miles', value: 63360 },
+  { unit: 'm', value: 0.0254 },
+  { unit: 'miles', value: 0.000015782828282828283 },
   { unit: 'sea miles', value: 0.000013714902775191375 },
   { unit: 'inches', value: 1 },
-  { unit: 'foot', value: 12 },
+  { unit: 'foot', value: 0.08333333333333333 },
 ];
 
 const CONTAINED_IN_CENTIMETERS = [
   { unit: 'cm', value: 1 },
   { unit: 'm', value: 0.01 },
-  { unit: 'miles', value: 160934.4 },
+  { unit: 'miles', value: 0.00000621371192237334 },
   { unit: 'sea miles', value: 0.000005399568034557236 },
-  { unit: 'inches', value: 2.54 },
-  { unit: 'foot', value: 30.48 },
+  { unit: 'inches', value: 0.39370078740157477 },
+  { unit: 'foot', value: 0.03280839895013123 },
 ];
 
 const CONTAINED_IN_SEA_MILES = [
@@ -56,8 +56,8 @@ const CONTAINED_IN_SEA_MILES = [
 
 const CONTAINED_IN_FOOTS = [
   { unit: 'cm', value: 30.48 },
-  { unit: 'm', value: 3.281 },
-  { unit: 'miles', value: 5280 },
+  { unit: 'm', value: 0.3048 },
+  { unit: 'miles', value: 0.0001893939393939394 },
   { unit: 'sea miles', value: 0.00016457884684539383 },
   { unit: 'inches', value: 12 },
   { unit: 'foot', value: 1 },
