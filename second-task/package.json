@@ -1,0 +1,30 @@
+{
+  "name": "second-task",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha src/**/*.js",
+    "lint": "./node_modules/.bin/eslint src/**/*.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm test",
+      "pre-push": "npm run lint"
+    }
+  },
+  "dependencies": {
+    "chai": "^4.2.0",
+    "chromedriver": "^76.0.0",
+    "mocha": "^6.2.0",
+    "selenium-webdriver": "^4.0.0-alpha.4"
+  },
+  "devDependencies": {
+    "eslint": "^6.1.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "husky": "^3.0.3"
+  }
+}
