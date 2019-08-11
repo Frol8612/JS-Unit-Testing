@@ -1,3 +1,13 @@
 module.exports = {
-  extends: 'airbnb-base',
+  env: {
+    commonjs: true,
+    es6: true,
+    node: true,
+    mocha: true,
+  },
+  extends: ['airbnb-base'],
+  parserOptions: {
+    ecmaVersion: 2018,
+  },
+  rules: {},
 };
