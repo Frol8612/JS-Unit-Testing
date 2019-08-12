@@ -5,7 +5,8 @@
   "main": ".eslintrc.js",
   "scripts": {
     "test": "nyc mocha src/**/*.test.js --reporter mochawesome",
-    "test:dev": "mocha src/**/*.test.js -w"
+    "test:dev": "mocha src/**/*.test.js -w",
+    "lint": "./node_modules/.bin/eslint src/**/*.js"
   },
   "author": "",
   "license": "ISC",
