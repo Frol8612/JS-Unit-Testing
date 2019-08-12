@@ -44,20 +44,6 @@ describe('Yndex.Mail', () => {
     await btn.click();
   });
 
-  /* it('should return error password', async () => {
-    await driver.wait(until.elementLocated(By.id('passp-field-passwd')), 2000);
-    const input = await driver.findElement(By.id('passp-field-passwd'));
-    const btn = await driver.findElement(By.className('button2_type_submit'));
-
-    await input.sendKeys('15689a');
-    await btn.click();
-
-    await driver.wait(until.elementLocated(By.xpath('//div[.=\'Неверный пароль\']')), 2000);
-    const error = await driver.findElement(By.xpath('//div[.=\'Неверный пароль\']')).getText();
-
-    await assert.equal(error, 'Неверный пароль');
-  }); */
-
   it('should return tag input passwd', async () => {
     await driver.wait(until.elementLocated(By.id('passp-field-passwd')), 2000);
     const input = await driver.findElement(By.id('passp-field-passwd'));
@@ -122,6 +108,13 @@ describe('Yndex.Mail', () => {
     await assert.equal(divText, 'Письмо отправлено.');
     await btn.click();
   });
+
+  it('incoming mail', async () => {
+    await driver.wait(until.elementLocated(By.className('mail-MessageSnippet-Content')), 2000);
+    const el = await driver.findElement(By.className('mail-MessageSnippet-Content'));
+    el.click();
+    await assert.isOk(el);
+  })
 
   after(async () => driver.quit());
 });
