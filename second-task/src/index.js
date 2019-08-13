@@ -14,7 +14,7 @@ describe('Yndex.Mail', () => {
   it('should be button', async () => {
     await driver.wait(until.elementLocated(By.xpath('//a/span[.=\'Войти\']')), 10000);
     const btn = await driver.findElement(By.xpath('//a[.=\'Войти\']'));
-    await assert.isOk(btn, 'button');
+    assert.isOk(btn, 'button');
     await btn.click();
   });
 
@@ -29,7 +29,7 @@ describe('Yndex.Mail', () => {
     await driver.wait(until.elementLocated(By.xpath('//div[.=\'Такого аккаунта нет\']')), 2000);
     const error = await driver.findElement(By.xpath('//div[.=\'Такого аккаунта нет\']')).getText();
 
-    await assert.equal(error, 'Такого аккаунта нет');
+    assert.equal(error, 'Такого аккаунта нет');
   });
 
   it('should return name input login', async () => {
@@ -39,7 +39,7 @@ describe('Yndex.Mail', () => {
     await input.clear();
     await input.sendKeys('test1ng7');
 
-    await assert.equal(inputTag, 'input');
+    assert.equal(inputTag, 'input');
 
     await btn.click();
   });
@@ -48,18 +48,17 @@ describe('Yndex.Mail', () => {
     await driver.wait(until.elementLocated(By.id('passp-field-passwd')), 2000);
     const input = await driver.findElement(By.id('passp-field-passwd'));
     const btn = await driver.findElement(By.className('button2_type_submit'));
-    const inputTag = await input.getTagName();
-    await assert.equal(inputTag, 'input');
     await input.sendKeys('123456789a');
     await btn.click();
+    await driver.wait(until.elementLocated(By.className('mail-User-Name')), 5000);
+    const userName = await driver.findElement(By.className('mail-User-Name')).getText();
+    assert.equal(userName, 'test1ng7');
   });
 
   it('should return name button Написать', async () => {
-    await driver.wait(until.elementLocated(By.xpath('//a[.=\'Написать\']')), 5000);
     const btn = await driver.findElement(By.xpath('//a[.=\'Написать\']'));
-    await assert.isOk(btn);
     const btnText = await btn.getText();
-    await assert.equal(btnText, 'Написать');
+    assert.equal(btnText, 'Написать');
     await btn.click();
   });
 
@@ -76,7 +75,7 @@ describe('Yndex.Mail', () => {
 
     const error = await driver.findElement(By.className('ns-view-compose-field-to-error')).getText();
 
-    await assert.equal(error, 'Некорректные адреса: test');
+    assert.equal(error, 'Некорректные адреса: test');
 
     const label = await driver.findElement(By.css('.js-contact-bubble.mail-Bubble-Contact.js-bubble.mail-Bubble'));
     await label.click();
@@ -89,7 +88,7 @@ describe('Yndex.Mail', () => {
     const div = await driver.findElement(By.css('div[name=\'to\']'));
     const btn = await driver.findElement(By.css('.nb-button._nb-large-action-button._init.js-editor-tabfocus-next.js-send.nb-group-start.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only'));
 
-    await assert.isOk(div);
+    assert.isOk(div);
 
     await div.sendKeys(
       'test1ng7@yandex.ru',
@@ -105,7 +104,7 @@ describe('Yndex.Mail', () => {
     await driver.wait(until.elementLocated(By.xpath('//div[.=\'Письмо отправлено.\']')), 2000);
     const divText = await driver.findElement(By.xpath('//div[.=\'Письмо отправлено.\']')).getText();
     const btn = await driver.findElement(By.css('.mail-ComposeButton-Refresh.js-main-action-refresh.ns-action'));
-    await assert.equal(divText, 'Письмо отправлено.');
+    assert.equal(divText, 'Письмо отправлено.');
     await btn.click();
   });
 
@@ -113,8 +112,8 @@ describe('Yndex.Mail', () => {
     await driver.wait(until.elementLocated(By.className('mail-MessageSnippet-Content')), 2000);
     const el = await driver.findElement(By.className('mail-MessageSnippet-Content'));
     el.click();
-    await assert.isOk(el);
-  })
+    assert.isOk(el);
+  });
 
   after(async () => driver.quit());
 });
