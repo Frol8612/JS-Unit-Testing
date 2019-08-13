@@ -18,7 +18,7 @@ const MeterCoefToAnyMap = new Map([
   ['foot', 3.28084],
 ]);
 
-const resultConvert = (value, convertTo,  measurement) => {
+const resultConvert = (value, convertTo, measurement) => {
   if (
     type(value) === 'number'
     && value >= 0
@@ -26,8 +26,8 @@ const resultConvert = (value, convertTo,  measurement) => {
 
     && measurmentsCoefToMeterMap.has(measurement)
   ) {
-    const result = value * measurmentsCoefToMeterMap.get(measurement) * MeterCoefToAnyMap.get(convertTo);
-    return Number(Math.round(result + 'e+5') + 'e-5');
+    const result = value * measurmentsCoefToMeterMap.get(measurement);
+    return Math.round(result * MeterCoefToAnyMap.get(convertTo) * 10000) / 10000;
   }
 
   throw new Error('error');
@@ -35,31 +35,26 @@ const resultConvert = (value, convertTo,  measurement) => {
 
 class LengthConverter {
   static convertToMiles(value, measurement) {
-    return resultConvert(value , 'miles', measurement);
+    return resultConvert(value, 'miles', measurement);
   }
 
   static convertToMeters(value, measurement) {
-
     return resultConvert(value, 'm', measurement);
   }
 
   static converToInches(value, measurement) {
-
     return resultConvert(value, 'inches', measurement);
   }
 
   static converToCentimeters(value, measurement) {
-
     return resultConvert(value, 'cm', measurement);
   }
 
   static converToSeaMiles(value, measurement) {
-
     return resultConvert(value, 'sea miles', measurement);
   }
 
   static converToFoots(value, measurement) {
-
     return resultConvert(value, 'foot', measurement);
   }
 }
