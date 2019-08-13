@@ -1,16 +1,33 @@
 const { type } = require('./utils');
 
-const resultConvert = (value, measurement, obj) => {
+const measurmentsCoefToMeterMap = new Map([
+  ['cm', 0.01],
+  ['m', 1],
+  ['miles', 1609.34],
+  ['sea miles', 1852],
+  ['inches', 0.0254],
+  ['foot', 0.3048],
+]);
+
+const MeterCoefToAnyMap = new Map([
+  ['cm', 100],
+  ['m', 1],
+  ['miles', 0.000621371192],
+  ['sea miles', 0.000539957],
+  ['inches', 39.3701],
+  ['foot', 3.28084],
+]);
+
+const resultConvert = (value, convertTo,  measurement) => {
   if (
     type(value) === 'number'
     && value >= 0
     && type(measurement) === 'string'
-    && Object.keys(obj).some(a => a === measurement)
-  ) {
-    if (value === 0) return 0;
-    if (measurement === 'sea miles') return value * obj[measurement];
 
-    return value / obj[measurement];
+    && measurmentsCoefToMeterMap.has(measurement)
+  ) {
+    const result = value * measurmentsCoefToMeterMap.get(measurement) * MeterCoefToAnyMap.get(convertTo);
+    return Number(Math.round(result + 'e+5') + 'e-5');
   }
 
   throw new Error('error');
@@ -18,82 +35,37 @@ const resultConvert = (value, measurement, obj) => {
 
 class LengthConverter {
   static convertToMiles(value, measurement) {
-    const CONVERT_TO_MILES = {
-      cm: 160934.4,
-      m: 1609.344,
-      miles: 1,
-      'sea miles': 1.151,
-      inches: 63360,
-      foot: 5280,
-    };
-
-    return resultConvert(value, measurement, CONVERT_TO_MILES);
+    return resultConvert(value , 'miles', measurement);
   }
 
   static convertToMeters(value, measurement) {
-    const CONVERT_TO_METERS = {
-      cm: 100,
-      m: 1,
-      miles: 1 / 1609.344,
-      'sea miles': 1852,
-      inches: 39.37,
-      foot: 3.281,
-    };
 
-    return resultConvert(value, measurement, CONVERT_TO_METERS);
+    return resultConvert(value, 'm', measurement);
   }
 
   static converToInches(value, measurement) {
-    const CONVERT_TO_INCHES = {
-      cm: 2.54,
-      m: 0.0254,
-      miles: 1 / 63360,
-      'sea miles': 72913.386,
-      inches: 1,
-      foot: 1 / 12,
-    };
 
-    return resultConvert(value, measurement, CONVERT_TO_INCHES);
+    return resultConvert(value, 'inches', measurement);
   }
 
   static converToCentimeters(value, measurement) {
-    const CONVERT_TO_CENTIMETERS = {
-      cm: 1,
-      m: 0.01,
-      miles: 1 / 160934.4,
-      'sea miles': 185200,
-      inches: 1 / 2.54,
-      foot: 1 / 30.48,
-    };
 
-    return resultConvert(value, measurement, CONVERT_TO_CENTIMETERS);
+    return resultConvert(value, 'cm', measurement);
   }
 
   static converToSeaMiles(value, measurement) {
-    const CONVERT_TO_SEA_MILES = {
-      cm: 185200,
-      m: 1852,
-      miles: 1.151,
-      'sea miles': 1,
-      inches: 72913.386,
-      foot: 6076.115,
-    };
 
-    return resultConvert(value, measurement, CONVERT_TO_SEA_MILES);
+    return resultConvert(value, 'sea miles', measurement);
   }
 
   static converToFoots(value, measurement) {
-    const CONVERT_TO_FOOTS = {
-      cm: 30.48,
-      m: 0.3048,
-      miles: 1 / 5280,
-      'sea miles': 6076.115,
-      inches: 12,
-      foot: 1,
-    };
 
-    return resultConvert(value, measurement, CONVERT_TO_FOOTS);
+    return resultConvert(value, 'foot', measurement);
   }
 }
 
-module.exports = LengthConverter;
+module.exports = {
+  LengthConverter,
+  measurmentsCoefToMeterMap,
+  MeterCoefToAnyMap,
+};
