@@ -6,14 +6,28 @@ const { assert } = require('chai');
 
 describe('Yndex.Mail', () => {
   const driver = new Builder().forBrowser('chrome').build();
-  const loginInput = By.id('passp-field-login');
-  const btnSubmit = By.css('button[type="submit"]');
-  const passwdInput = By.id('passp-field-passwd');
-  const enterInput = By.css('div[name=\'to\']');
+  const randomSubject = Math.random().toString(36).slice(2);
+  let loginInput;
+  let btnSubmit;
+  let passwdInput;
+  let enterInput;
+  let check;
+  let remove;
+  let message;
 
   before(() => {
     driver.get('https://mail.yandex.by/');
     driver.manage().setTimeouts({ pageLoad: 25000 });
+  });
+
+  beforeEach(() => {
+    loginInput = By.id('passp-field-login');
+    btnSubmit = By.css('button[type="submit"]');
+    passwdInput = By.id('passp-field-passwd');
+    enterInput = By.css('div[name=\'to\']');
+    check = By.css('label.js-skip-click-message-item');
+    remove = By.className('js-toolbar-item-delete');
+    message = By.css('.mail-MessageSnippet-Content .mail-MessageSnippet-Item.mail-MessageSnippet-Item_subject');
   });
 
   it('should be button', async () => {
@@ -37,6 +51,7 @@ describe('Yndex.Mail', () => {
 
   it('should return name login', async () => {
     const input = await driver.findElement(loginInput);
+    await driver.wait(until.elementLocated(loginInput), 2000);
 
     await input.clear();
     await input.sendKeys('test1ng7');
@@ -81,37 +96,59 @@ describe('Yndex.Mail', () => {
 
   it('should return sent to name', async () => {
     const div = await driver.findElement(enterInput);
-    const name = By.className('mail-Bubble-Block_text');
 
     await div.sendKeys(
       'test1ng7@yandex.ru',
       Key.TAB,
-      'Hi, my name is Test',
+      randomSubject,
       Key.TAB,
       'The letter for you, my frind',
     );
 
+    const name = By.className('mail-Bubble-Block_text');
     const nameTo = await driver.findElement(name).getText();
 
-    assert.equal(nameTo, 'test1ng7');
+    assert.equal(nameTo.match(/test1ng7/g)[0], 'test1ng7');
     await driver.findElement(btnSubmit).click();
   });
 
-  it('should return text "Письмо отправленно"', async () => {
+  it('should be done', async () => {
     const messege = By.className('js-title-info');
     const btnRefresh = By.css('.mail-ComposeButton-Refresh.js-main-action-refresh.ns-action');
     await driver.wait(until.elementLocated(messege), 2000);
+    const done = await driver.findElement(messege).getAttribute('class');
 
-    assert.equal(await driver.findElement(messege).getText(), 'Письмо отправлено.');
+    assert.equal(done.match(/(D|d)one/g)[0], 'Done');
     await driver.findElement(btnRefresh).click();
-    await driver.wait(until.elementLocated(By.className('mail-MessageSnippet-Content')), 2000);
   });
 
-  it('incoming mail', async () => {
-    const btnMessage = By.className('mail-MessageSnippet-Content');
-    const el = await driver.findElement(btnMessage);
-    el.click();
-    assert.isOk(el);
+  it('inbox mail', async () => {
+    const inbox = By.css('.mail-FolderList-Item_inbox.mail-NestedList-Item_current');
+    await driver.wait(until.elementLocated(inbox), 2000);
+    const btnInbox = await driver.findElement(inbox);
+
+    assert.equal(await btnInbox.getCssValue('background-color'), 'rgba(107, 135, 175, 0.2)');
+  });
+
+  it('should have an incoming message', async () => {
+    await driver.wait(until.elementLocated(message));
+
+    const messageSubject = await driver.findElement(message).getText();
+    assert.equal(messageSubject, randomSubject);
+    await driver.findElement(check).click();
+    await driver.findElement(remove).click();
+  });
+
+  it('should be sent message', async () => {
+    const sent = By.css('a[href="#sent"]');
+    await driver.findElement(sent).click();
+
+    await driver.wait(until.elementLocated(message));
+
+    const messageSubject = await driver.findElement(message).getText();
+    assert.equal(messageSubject, randomSubject);
+    await driver.findElement(check).click();
+    await driver.findElement(remove).click();
   });
 
   after(async () => driver.quit());
