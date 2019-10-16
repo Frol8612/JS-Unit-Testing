@@ -133,7 +133,7 @@ describe('Yndex.Mail', () => {
   });
 
   it('should have an incoming message', async () => {
-    await driver.wait(until.elementLocated(message), 2000);
+    await driver.wait(until.elementLocated(message), 3000);
 
     const messageSubject = await driver.findElement(message).getText();
     assert.equal(messageSubject, randomSubject);
@@ -145,7 +145,7 @@ describe('Yndex.Mail', () => {
     const sent = By.css('a[href="#sent"]');
     await driver.findElement(sent).click();
 
-    await driver.wait(until.elementLocated(message));
+    await driver.wait(until.elementLocated(message), 3000);
 
     const messageSubject = await driver.findElement(message).getText();
     assert.equal(messageSubject, randomSubject);
