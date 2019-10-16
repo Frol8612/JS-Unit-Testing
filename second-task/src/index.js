@@ -131,7 +131,7 @@ describe('Yndex.Mail', () => {
   });
 
   it('should have an incoming message', async () => {
-    await driver.wait(until.elementLocated(message));
+    await driver.wait(until.elementLocated(message), 2000);
 
     const messageSubject = await driver.findElement(message).getText();
     assert.equal(messageSubject, randomSubject);
