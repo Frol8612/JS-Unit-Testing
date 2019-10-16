@@ -5,8 +5,8 @@ const {
 const { assert } = require('chai');
 
 describe('Yndex.Mail', () => {
-  const driver = new Builder().forBrowser('chrome').build();
-  const randomSubject = Math.random().toString(36).slice(2);
+  let driver;
+  let randomSubject;
   let loginInput;
   let btnSubmit;
   let passwdInput;
@@ -16,8 +16,10 @@ describe('Yndex.Mail', () => {
   let message;
 
   before(() => {
+    driver = new Builder().forBrowser('chrome').build();
     driver.get('https://mail.yandex.by/');
     driver.manage().setTimeouts({ pageLoad: 25000 });
+    randomSubject = Math.random().toString(36).slice(2);
   });
 
   beforeEach(() => {
@@ -27,7 +29,7 @@ describe('Yndex.Mail', () => {
     enterInput = By.css('div[name=\'to\']');
     check = By.css('label.js-skip-click-message-item');
     remove = By.className('js-toolbar-item-delete');
-    message = By.css('.mail-MessageSnippet-Content .mail-MessageSnippet-Item.mail-MessageSnippet-Item_subject');
+    message = By.className('mail-MessageSnippet-Item_subject');
   });
 
   it('should be button', async () => {
