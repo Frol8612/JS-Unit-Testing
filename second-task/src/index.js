@@ -11,9 +11,8 @@ describe('Yndex.Mail', () => {
   let btnSubmit;
   let passwdInput;
   let enterInput;
-  let check;
-  let remove;
   let message;
+  let focused;
 
   before(() => {
     driver = new Builder().forBrowser('chrome').build();
@@ -27,8 +26,7 @@ describe('Yndex.Mail', () => {
     btnSubmit = By.css('button[type="submit"]');
     passwdInput = By.id('passp-field-passwd');
     enterInput = By.css('div[name=\'to\']');
-    check = By.css('label.js-skip-click-message-item');
-    remove = By.className('js-toolbar-item-delete');
+    focused = By.className('passp-form-field_focused');
     message = title => By.css(`span[title='${title}']`);
   });
 
@@ -42,11 +40,12 @@ describe('Yndex.Mail', () => {
   it('should don`t be user return error', async () => {
     const error = By.css('div.passp-form-field__error');
 
-    await driver.sleep(1000);
     await driver.wait(
-      until.elementLocated(loginInput),
+      until.elementLocated(focused),
       5000,
-    ).sendKeys('te786st');
+    );
+
+    await driver.findElement(loginInput).sendKeys('te786st');
     await driver.findElement(btnSubmit).click();
 
     const errorColor = await driver.wait(
@@ -57,17 +56,17 @@ describe('Yndex.Mail', () => {
   });
 
   it('should return name login', async () => {
-    const input = await driver.wait(until.elementLocated(loginInput), 5000);
-
+    const input = await driver.findElement(loginInput);
     await input.clear();
     await input.sendKeys('test1ng7');
     await driver.findElement(btnSubmit).click();
 
-    await driver.sleep(1000);
     await driver.wait(
-      until.elementLocated(passwdInput),
+      until.elementLocated(focused),
       5000,
-    ).sendKeys('123456789a');
+    );
+
+    await driver.findElement(passwdInput).sendKeys('123456789a');
     await driver.findElement(btnSubmit).click();
 
     const user = By.className('mail-User-Name');
@@ -123,10 +122,13 @@ describe('Yndex.Mail', () => {
     );
 
     const name = By.className('mail-Bubble-Block_text');
-    const nameTo = await driver.wait(until.elementLocated(name), 5000).getText();
+    const nameTo = await driver.wait(
+      until.elementLocated(name),
+      5000,
+    ).getText();
 
     assert.equal(nameTo.match(/test1ng7/g)[0], 'test1ng7');
-    await driver.findElement(btnSubmit).click();
+    await driver.findElement(By.className('js-editor-tabfocus-next')).click();
   });
 
   it('should be done', async () => {
@@ -149,6 +151,20 @@ describe('Yndex.Mail', () => {
     assert.equal(await btnInbox.getCssValue('background-color'), 'rgba(107, 135, 175, 0.2)');
   });
 
+  const removeMessage = async () => {
+    const check = By.css('._nb-checkbox-flag._nb-checkbox-normal-flag');
+    const remove = By.className('js-toolbar-item-delete');
+
+    await driver.wait(until.elementLocated(check), 5000).click();
+    await driver.wait(async () => {
+      const color = await driver.findElement(
+        By.css('.js-toolbar-item-delete .svgicon-mail--MainToolbar-Delete'),
+      ).getCssValue('color');
+      return color === 'rgba(230, 80, 80, 1)';
+    }, 5000);
+    await driver.findElement(remove).click();
+  };
+
   it('should have an incoming message', async () => {
     const messageSubject = await driver.wait(
       until.elementLocated(message(randomSubject)),
@@ -156,11 +172,7 @@ describe('Yndex.Mail', () => {
     ).getText();
 
     assert.equal(messageSubject, randomSubject);
-
-    await driver.findElement(check).click();
-    await driver.sleep(1000);
-    await driver.findElement(remove).click();
-    await driver.sleep(500);
+    await removeMessage();
     await driver.findElement(By.css('a[href="#sent"]')).click();
   });
 
@@ -171,12 +183,10 @@ describe('Yndex.Mail', () => {
     ).getText();
 
     assert.equal(messageSubject, randomSubject);
-
-    await driver.findElement(check).click();
-    await driver.sleep(1000);
-    await driver.findElement(remove).click();
-    await driver.sleep(500);
+    await removeMessage();
   });
 
-  after(async () => driver.quit());
+  after(async () => {
+    await driver.quit();
+  });
 });
