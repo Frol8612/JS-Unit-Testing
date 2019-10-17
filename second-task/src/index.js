@@ -29,42 +29,52 @@ describe('Yndex.Mail', () => {
     enterInput = By.css('div[name=\'to\']');
     check = By.css('label.js-skip-click-message-item');
     remove = By.className('js-toolbar-item-delete');
-    message = By.className('mail-MessageSnippet-Item_subject');
+    message = title => By.css(`span[title='${title}']`);
   });
 
   it('should be button', async () => {
     const btnEnter = By.css('a.HeadBanner-Button-Enter');
-    const btn = await driver.findElement(btnEnter);
+    const btn = await driver.wait(until.elementLocated(btnEnter));
     assert.isOk(btn, 'button');
     await btn.click();
   });
 
   it('should don`t be user return error', async () => {
     const error = By.css('div.passp-form-field__error');
-    await driver.wait(until.elementLocated(loginInput), 2000);
 
-    await driver.findElement(loginInput).sendKeys('te786st');
+    await driver.sleep(1000);
+    await driver.wait(
+      until.elementLocated(loginInput),
+      5000,
+    ).sendKeys('te786st');
     await driver.findElement(btnSubmit).click();
-    await driver.wait(until.elementLocated(error), 2000);
-    const errorColor = await driver.findElement(error).getCssValue('color');
 
+    const errorColor = await driver.wait(
+      until.elementLocated(error),
+      5000,
+    ).getCssValue('color');
     assert.equal(errorColor, 'rgba(223, 75, 65, 1)');
   });
 
   it('should return name login', async () => {
-    const input = await driver.findElement(loginInput);
-    await driver.wait(until.elementLocated(loginInput), 2000);
+    const input = await driver.wait(until.elementLocated(loginInput), 5000);
 
     await input.clear();
     await input.sendKeys('test1ng7');
     await driver.findElement(btnSubmit).click();
 
-    await driver.wait(until.elementLocated(passwdInput), 2000);
-    await driver.findElement(passwdInput).sendKeys('123456789a');
+    await driver.sleep(1000);
+    await driver.wait(
+      until.elementLocated(passwdInput),
+      5000,
+    ).sendKeys('123456789a');
     await driver.findElement(btnSubmit).click();
-    await driver.wait(until.elementLocated(By.className('mail-User-Name')), 5000);
 
-    const userName = await driver.findElement(By.className('mail-User-Name')).getText();
+    const user = By.className('mail-User-Name');
+    const userName = await driver.wait(
+      until.elementLocated(user),
+      5000,
+    ).getText();
     assert.equal(userName, 'test1ng7');
   });
 
@@ -80,20 +90,25 @@ describe('Yndex.Mail', () => {
     const error = By.className('ns-view-compose-field-to-error');
     const dropdownMenu = By.css('.b-mail-dropdown__item__content.js-bubble-remove');
     const btnLabel = By.css('.js-contact-bubble.mail-Bubble-Contact.js-bubble.mail-Bubble');
-    await driver.wait(until.elementLocated(enterInput), 2000);
 
-    await driver.findElement(enterInput).sendKeys('test');
+    await driver.wait(
+      until.elementLocated(enterInput),
+      5000,
+    ).sendKeys('test');
     await driver.findElement(btnSubmit).click();
 
-    await driver.wait(until.elementLocated(error), 2000);
-
-    const errorColor = await driver.findElement(error).getCssValue('background-color');
+    const errorColor = await driver.wait(
+      until.elementLocated(error),
+      5000,
+    ).getCssValue('background-color');
 
     assert.equal(errorColor, 'rgba(230, 21, 21, 0.1)');
 
     await driver.findElement(btnLabel).click();
-    await driver.wait(until.elementLocated(dropdownMenu), 2000);
-    await driver.findElement(dropdownMenu).click();
+    await driver.wait(
+      until.elementLocated(dropdownMenu),
+      5000,
+    ).click();
   });
 
   it('should return sent to name', async () => {
@@ -108,7 +123,7 @@ describe('Yndex.Mail', () => {
     );
 
     const name = By.className('mail-Bubble-Block_text');
-    const nameTo = await driver.findElement(name).getText();
+    const nameTo = await driver.wait(until.elementLocated(name), 5000).getText();
 
     assert.equal(nameTo.match(/test1ng7/g)[0], 'test1ng7');
     await driver.findElement(btnSubmit).click();
@@ -117,8 +132,11 @@ describe('Yndex.Mail', () => {
   it('should be done', async () => {
     const messege = By.className('js-title-info');
     const btnRefresh = By.css('.mail-ComposeButton-Refresh.js-main-action-refresh.ns-action');
-    await driver.wait(until.elementLocated(messege), 2000);
-    const done = await driver.findElement(messege).getAttribute('class');
+
+    const done = await driver.wait(
+      until.elementLocated(messege),
+      5000,
+    ).getAttribute('class');
 
     assert.equal(done.match(/(D|d)one/g)[0], 'Done');
     await driver.findElement(btnRefresh).click();
@@ -126,31 +144,38 @@ describe('Yndex.Mail', () => {
 
   it('inbox mail', async () => {
     const inbox = By.css('.mail-FolderList-Item_inbox.mail-NestedList-Item_current');
-    await driver.wait(until.elementLocated(inbox), 2000);
-    const btnInbox = await driver.findElement(inbox);
+    const btnInbox = await driver.wait(until.elementLocated(inbox), 5000);
 
     assert.equal(await btnInbox.getCssValue('background-color'), 'rgba(107, 135, 175, 0.2)');
   });
 
   it('should have an incoming message', async () => {
-    await driver.wait(until.elementLocated(message), 3000);
+    const messageSubject = await driver.wait(
+      until.elementLocated(message(randomSubject)),
+      5000,
+    ).getText();
 
-    const messageSubject = await driver.findElement(message).getText();
     assert.equal(messageSubject, randomSubject);
+
     await driver.findElement(check).click();
+    await driver.sleep(1000);
     await driver.findElement(remove).click();
+    await driver.sleep(500);
+    await driver.findElement(By.css('a[href="#sent"]')).click();
   });
 
   it('should be sent message', async () => {
-    const sent = By.css('a[href="#sent"]');
-    await driver.findElement(sent).click();
+    const messageSubject = await driver.wait(
+      until.elementLocated(message(randomSubject)),
+      5000,
+    ).getText();
 
-    await driver.wait(until.elementLocated(message), 3000);
-
-    const messageSubject = await driver.findElement(message).getText();
     assert.equal(messageSubject, randomSubject);
+
     await driver.findElement(check).click();
+    await driver.sleep(1000);
     await driver.findElement(remove).click();
+    await driver.sleep(500);
   });
 
   after(async () => driver.quit());
