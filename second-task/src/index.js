@@ -11,7 +11,7 @@ describe('Yndex.Mail', () => {
   const loginInput = By.id('passp-field-login');
   const btnSubmit = By.css('button[type="submit"]');
   const passwdInput = By.id('passp-field-passwd');
-  const enterInput = By.css('div[name=\'to\']');
+  const enterInput = By.css('div[name="to"]');
   const focused = By.className('passp-form-field_focused');
   const btnRefresh = By.css('.mail-ComposeButton-Refresh.js-main-action-refresh.ns-action');
 
