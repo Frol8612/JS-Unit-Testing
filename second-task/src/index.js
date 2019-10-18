@@ -7,27 +7,34 @@ const { assert } = require('chai');
 describe('Yndex.Mail', () => {
   let driver;
   let randomSubject;
-  let loginInput;
-  let btnSubmit;
-  let passwdInput;
-  let enterInput;
-  let message;
-  let focused;
+  const USER_NAME = 'test1ng7';
+  const loginInput = By.id('passp-field-login');
+  const btnSubmit = By.css('button[type="submit"]');
+  const passwdInput = By.id('passp-field-passwd');
+  const enterInput = By.css('div[name=\'to\']');
+  const focused = By.className('passp-form-field_focused');
+  const btnRefresh = By.css('.mail-ComposeButton-Refresh.js-main-action-refresh.ns-action');
+
+  const message = title => By.css(`span[title='${title}']`);
+  const removeMessage = async () => {
+    const check = By.css('._nb-checkbox-flag._nb-checkbox-normal-flag');
+    const remove = By.className('js-toolbar-item-delete');
+
+    await driver.wait(until.elementLocated(check), 5000).click();
+    await driver.wait(async () => {
+      const color = await driver.findElement(
+        By.css('.js-toolbar-item-delete .svgicon-mail--MainToolbar-Delete'),
+      ).getCssValue('color');
+      return color === 'rgba(230, 80, 80, 1)';
+    }, 5000);
+    await driver.findElement(remove).click();
+  };
 
   before(() => {
     driver = new Builder().forBrowser('chrome').build();
     driver.get('https://mail.yandex.by/');
     driver.manage().setTimeouts({ pageLoad: 25000 });
     randomSubject = Math.random().toString(36).slice(2);
-  });
-
-  beforeEach(() => {
-    loginInput = By.id('passp-field-login');
-    btnSubmit = By.css('button[type="submit"]');
-    passwdInput = By.id('passp-field-passwd');
-    enterInput = By.css('div[name=\'to\']');
-    focused = By.className('passp-form-field_focused');
-    message = title => By.css(`span[title='${title}']`);
   });
 
   it('should be button', async () => {
@@ -58,7 +65,7 @@ describe('Yndex.Mail', () => {
   it('should return name login', async () => {
     const input = await driver.findElement(loginInput);
     await input.clear();
-    await input.sendKeys('test1ng7');
+    await input.sendKeys(USER_NAME);
     await driver.findElement(btnSubmit).click();
 
     await driver.wait(
@@ -74,7 +81,7 @@ describe('Yndex.Mail', () => {
       until.elementLocated(user),
       5000,
     ).getText();
-    assert.equal(userName, 'test1ng7');
+    assert.equal(userName, USER_NAME);
   });
 
   it('should return button "write off"', async () => {
@@ -114,26 +121,26 @@ describe('Yndex.Mail', () => {
     const div = await driver.findElement(enterInput);
 
     await div.sendKeys(
-      'test1ng7@yandex.ru',
+      `${USER_NAME}@yandex.ru`,
       Key.TAB,
       randomSubject,
       Key.TAB,
       'The letter for you, my frind',
+      Key.TAB,
     );
 
-    const name = By.className('mail-Bubble-Block_text');
+    const name = By.css(`span[data-yabble-name="${USER_NAME}"]`);
     const nameTo = await driver.wait(
       until.elementLocated(name),
       5000,
     ).getText();
 
-    assert.equal(nameTo.match(/test1ng7/g)[0], 'test1ng7');
-    await driver.findElement(By.className('js-editor-tabfocus-next')).click();
+    assert.equal(nameTo.match(new RegExp(USER_NAME, 'g'))[0], USER_NAME);
+    await driver.findElement(btnSubmit).click();
   });
 
   it('should be done', async () => {
     const messege = By.className('js-title-info');
-    const btnRefresh = By.css('.mail-ComposeButton-Refresh.js-main-action-refresh.ns-action');
 
     const done = await driver.wait(
       until.elementLocated(messege),
@@ -145,31 +152,29 @@ describe('Yndex.Mail', () => {
   });
 
   it('inbox mail', async () => {
-    const inbox = By.css('.mail-FolderList-Item_inbox.mail-NestedList-Item_current');
-    const btnInbox = await driver.wait(until.elementLocated(inbox), 5000);
+    const inbox = By.css('a[href="#inbox"].mail-NestedList-Item_current');
+    const btnInboxColor = await driver.wait(
+      until.elementLocated(inbox),
+      5000,
+    ).getCssValue('background-color');
 
-    assert.equal(await btnInbox.getCssValue('background-color'), 'rgba(107, 135, 175, 0.2)');
+    assert.equal(await btnInboxColor, 'rgba(107, 135, 175, 0.2)');
   });
 
-  const removeMessage = async () => {
-    const check = By.css('._nb-checkbox-flag._nb-checkbox-normal-flag');
-    const remove = By.className('js-toolbar-item-delete');
-
-    await driver.wait(until.elementLocated(check), 5000).click();
-    await driver.wait(async () => {
-      const color = await driver.findElement(
-        By.css('.js-toolbar-item-delete .svgicon-mail--MainToolbar-Delete'),
-      ).getCssValue('color');
-      return color === 'rgba(230, 80, 80, 1)';
-    }, 5000);
-    await driver.findElement(remove).click();
-  };
+  const waitMessage = time => driver.wait(
+    until.elementLocated(message(randomSubject)),
+    time,
+  ).getText();
 
   it('should have an incoming message', async () => {
-    const messageSubject = await driver.wait(
-      until.elementLocated(message(randomSubject)),
-      5000,
-    ).getText();
+    let messageSubject;
+
+    try {
+      messageSubject = await waitMessage(3000);
+    } catch (err) {
+      await driver.findElement(btnRefresh).click();
+      messageSubject = await waitMessage(5000);
+    }
 
     assert.equal(messageSubject, randomSubject);
     await removeMessage();
@@ -177,10 +182,14 @@ describe('Yndex.Mail', () => {
   });
 
   it('should be sent message', async () => {
-    const messageSubject = await driver.wait(
-      until.elementLocated(message(randomSubject)),
-      5000,
-    ).getText();
+    await driver.wait(async () => {
+      const sent = By.css('a[href="#sent"]');
+      const bgColor = await driver.findElement(sent)
+        .getCssValue('background-color');
+      return bgColor === 'rgba(107, 135, 175, 0.2)';
+    }, 5000);
+
+    const messageSubject = await waitMessage(5000);
 
     assert.equal(messageSubject, randomSubject);
     await removeMessage();
