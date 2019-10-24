@@ -50,8 +50,8 @@ class MailPage extends BasePage {
       .getCssValue(BGC);
   }
 
-  removeNameWhome() {
-    super.find({ css: WHOME_NAME_CLICK }).click();
+  async removeNameWhome() {
+    await super.find({ css: WHOME_NAME_CLICK }).click();
     return super.waitElement(
       { css: WHOME_NAME_REMOVE },
       TIME_WAIT,
