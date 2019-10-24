@@ -38,13 +38,6 @@ class MailPage extends BasePage {
       .sendKeys(TEST);
   }
 
-  getName() {
-    return super.waitElement(
-      { css: WHOLE_NAME_VALUE },
-      TIME_WAIT,
-    ).getText();
-  }
-
   getCssValueError() {
     return super.waitElement({ className: WHOME_NAME_ERROR }, TIME_WAIT)
       .getCssValue(BGC);
@@ -67,7 +60,7 @@ class MailPage extends BasePage {
 
   waitMessage(subject) {
     return super.waitElement(
-      { css: subjectLocate(subject) },
+      { css: subject ? subjectLocate(subject) : WHOLE_NAME_VALUE },
       TIME_WAIT,
     ).getText();
   }

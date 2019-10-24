@@ -65,7 +65,7 @@ describe('Yndex.Mail', () => {
   it('should return sent to name', async () => {
     await MailPage.writeLetter(subject);
 
-    const nameTo = await MailPage.getName();
+    const nameTo = await MailPage.waitMessage();
 
     assert.equal(nameTo.match(new RegExp(USER_NAME, 'g'))[0], USER_NAME);
     await LoginPage.submit();
