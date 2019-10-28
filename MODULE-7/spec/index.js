@@ -1,4 +1,4 @@
-require('chromedriver');
+//  require('chromedriver');
 
 const { assert } = require('chai');
 const Browser = require('../src/browser');
@@ -18,6 +18,11 @@ const {
   BGC_ERROR,
   DONE,
   DONE_REG,
+  WRITE_LETTER,
+  REFRESH,
+  SENT,
+  WIDTH_WRITE,
+  W,
 } = require('../src/constants');
 
 describe('Yndex.Mail', () => {
@@ -49,8 +54,23 @@ describe('Yndex.Mail', () => {
     assert.equal(userName, USER_NAME);
   });
 
+  it('should be change button write letter', async () => {
+    await Browser.driver.actions()
+      .move({ x: 298, y: 60 })
+      .press()
+      .release()
+      .perform();
+
+    const widthBtn = await NavigationPage.getCssValueWidth(WRITE_LETTER);
+    assert.equal(widthBtn, WIDTH_WRITE);
+    await NavigationPage.highlightWithJS({ css: '.js-layout-left-toggler' });
+  });
+
   it('should return error adress', async () => {
-    await NavigationPage.clickWriteLetter();
+    await Browser.driver.actions()
+      .sendKeys(W)
+      .perform();
+
     await MailPage.writeLetter();
 
     await LoginPage.submit();
@@ -75,7 +95,7 @@ describe('Yndex.Mail', () => {
     const done = await MailPage.getDone();
 
     assert.equal(done.match(DONE_REG)[0], DONE);
-    await NavigationPage.refresh();
+    await NavigationPage.clickNavigation(REFRESH);
   });
 
   it('should have an incoming message', async () => {
@@ -84,7 +104,7 @@ describe('Yndex.Mail', () => {
     try {
       messageSubject = await MailPage.waitMessage(subject);
     } catch (err) {
-      await NavigationPage.refresh();
+      await NavigationPage.clickNavigation(REFRESH);
       messageSubject = await MailPage.waitMessage(subject);
     }
 
@@ -93,8 +113,8 @@ describe('Yndex.Mail', () => {
   });
 
   it('should be sent message', async () => {
-    await NavigationPage.clickSent();
-    await NavigationPage.waitSent();
+    await NavigationPage.clickNavigation(SENT);
+    await NavigationPage.waitSent(SENT);
 
     const messageSubject = await MailPage.waitMessage(subject);
 

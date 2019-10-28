@@ -22,6 +22,15 @@ class BasePage {
     }
     return driver.wait(this.find(arg, UNTIL), ms);
   }
+
+  async highlightWithJS(arg) {
+    const el = await this.find(arg);
+    const bg = await el.getCssValue('backgroundColor');
+    await driver.executeScript('arguments[0].style.backgroundColor = "red"', el);
+    await driver.sleep(1000);
+    await driver.executeScript(`arguments[0].style.backgroundColor = '${bg}'`, el);
+    return driver.executeScript('arguments[0].click()', el);
+  }
 }
 
 module.exports = BasePage;

@@ -39,4 +39,6 @@ module.exports = {
   DELETE_COLOR: 'rgba(230, 80, 80, 1)',
   BTN_DELETE: 'js-toolbar-item-delete',
   CHECKBOX: '._nb-checkbox-flag._nb-checkbox-normal-flag',
+  WIDTH_WRITE: '36px',
+  W: 'w',
 };

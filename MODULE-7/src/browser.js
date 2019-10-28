@@ -2,7 +2,10 @@ const { Builder } = require('selenium-webdriver');
 
 class Browser {
   constructor() {
-    this.driver = new Builder().forBrowser('chrome').build();
+    this.driver = new Builder()
+      .usingServer('http://localhost:4444/wd/hub')
+      .forBrowser('chrome')
+      .build();
   }
 
   getUrl(url, ms) {

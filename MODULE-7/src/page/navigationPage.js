@@ -1,29 +1,22 @@
 const BasePage = require('../basePage');
 const {
-  WRITE_LETTER,
-  REFRESH,
-  SENT,
   TIME_WAIT,
   BGC,
   BGC_CHOSE_SENT,
 } = require('./../constants');
 
 class NavigationPage extends BasePage {
-  clickWriteLetter() {
-    return super.find({ css: WRITE_LETTER }).click();
+  clickNavigation(css) {
+    return super.highlightWithJS({ css });
   }
 
-  refresh() {
-    return super.find({ css: REFRESH }).click();
+  getCssValueWidth(css) {
+    return super.waitElement({ css }, TIME_WAIT).getCssValue('width');
   }
 
-  clickSent() {
-    return super.find({ css: SENT }).click();
-  }
-
-  waitSent() {
+  waitSent(css) {
     return super.waitElement(async () => {
-      const bgColor = await super.find({ css: SENT })
+      const bgColor = await super.find({ css })
         .getCssValue(BGC);
       return bgColor === BGC_CHOSE_SENT;
     }, TIME_WAIT);

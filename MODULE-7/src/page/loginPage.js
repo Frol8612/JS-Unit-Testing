@@ -18,7 +18,7 @@ class LoginPage extends BasePage {
   }
 
   enterButton() {
-    return super.waitElement({ css: MAIN_BUTTON }, TIME_WAIT).click();
+    return super.waitElement({ css: MAIN_BUTTON }, TIME_WAIT * 2).click();
   }
 
   enterLogin(name, wait) {

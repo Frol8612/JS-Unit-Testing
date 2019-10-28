@@ -30,7 +30,6 @@ class MailPage extends BasePage {
         subject,
         Key.TAB,
         BODY_LETTER,
-        Key.TAB,
       );
     }
 
@@ -43,8 +42,8 @@ class MailPage extends BasePage {
       .getCssValue(BGC);
   }
 
-  async removeNameWhome() {
-    await super.find({ css: WHOME_NAME_CLICK }).click();
+  removeNameWhome() {
+    super.find({ css: WHOME_NAME_CLICK }).click();
     return super.waitElement(
       { css: WHOME_NAME_REMOVE },
       TIME_WAIT,
