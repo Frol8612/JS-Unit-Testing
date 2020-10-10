@@ -1,0 +1,5 @@
+{
+  "single-process": true,
+  "timeout": 25000,
+  "spec": "spec/**/*.js"
+}
